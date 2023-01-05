@@ -158,7 +158,7 @@ jobs:
       - run:
           name: Installing tar utility
           command: |
-            sudo apt install tar -y
+            apt install tar -y
 
       - run:
           name: Ensure back-end infrastructure exists
