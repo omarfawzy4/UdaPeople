@@ -202,7 +202,7 @@ jobs:
     steps:
       - checkout
       - install-ansible
-      - add-ssh-keys:
+      - add_ssh_keys:
           fingerprints: ["30:1a:4e:65:9d:c1:d0:07:18:ca:98:98:64:4a:d6:d6"]
       - attach_workspace:
           at: ~/
