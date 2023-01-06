@@ -72,7 +72,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontenddependencies]
+          keys: [frontend-dependencies]
       - run:
           name: Build front-end
           command: |
@@ -91,7 +91,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backenddependencies]
+          keys: [backend-dependencies]
       - run:
           name: Build back-end
           command: |
@@ -104,224 +104,224 @@ jobs:
             - backend/node_modules
             - backend/dist
 
-  # test-frontend:
-  #   docker:
-  #     - image: cimg/node:13.8.0
-  #   steps:
-  #     - checkout
-  #     - restore_cache:
-  #         keys: [frontenddependencies]
-  #     - run:
-  #         name: Unit test for front-end
-  #         command: |
-  #           cd frontend
-  #           npm install
-  #           npm run test
+  test-frontend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-dependencies]
+      - run:
+          name: Unit test for front-end
+          command: |
+            cd frontend
+            npm install
+            npm run test
 
                 
-  # test-backend:
-  #   docker:
-  #     - image: cimg/node:13.8.0
-  #   steps:
-  #     - checkout
-  #     - restore_cache:
-  #         keys: [backenddependencies]
-  #     - run:
-  #         name: Unit test for back-end
-  #         command: |
-  #            cd backend
-  #            npm install
-  #            npm run test
+  test-backend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-dependencies]
+      - run:
+          name: Unit test for back-end
+          command: |
+             cd backend
+             npm install
+             npm run test
             
-  # scan-frontend:
-  #   docker:
-  #     - image: cimg/node:13.8.0
-  #   steps:
-  #     - checkout
-  #     - restore_cache:
-  #         keys: [frontenddependencies]
-  #     - run:
-  #         name: Scan for front-end
-  #         command: |
-  #           cd frontend
-  #           npm install
-  #           npm audit fix --force --audit-level=critical
-  #           npm update minimist --depth 4
-  #           npm update loader-utils --depth 2
-  #           npm update lodash --depth 12
-  #           npm update mkdirp --depth 4
-  #           npm audit --audit-level=critical
+  scan-frontend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-dependencies]
+      - run:
+          name: Scan for front-end
+          command: |
+            cd frontend
+            npm install
+            npm audit fix --force --audit-level=critical
+            npm update minimist --depth 4
+            npm update loader-utils --depth 2
+            npm update lodash --depth 12
+            npm update mkdirp --depth 4
+            npm audit --audit-level=critical
 
-  # scan-backend:
-  #   docker:
-  #     - image: cimg/node:13.8.0
-  #   steps:
-  #     - checkout
-  #     - restore_cache:
-  #         keys: [backenddependencies]
-  #     - run:
-  #         name: Scan for back-end
-  #         command: |
-  #           cd backend
-  #           npm install
-  #           npm audit fix --force --audit-level=critical
-  #           npm audit fix --force --audit-level=critical
-  #           npm audit --audit-level=critical
+  scan-backend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-dependencies]
+      - run:
+          name: Scan for back-end
+          command: |
+            cd backend
+            npm install
+            npm audit fix --force --audit-level=critical
+            npm audit fix --force --audit-level=critical
+            npm audit --audit-level=critical
 
-  # deploy-infrastructure:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - checkout
-  #     - install-aws-cli
-  #     - run:
-  #         name: Ensure back-end infrastructure exists
-  #         command: |
-  #           aws cloudformation deploy \
-  #             --template-file .circleci/files/backend.yml \
-  #             --tags project=Udapeople \
-  #             --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-  #             --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+  deploy-infrastructure:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install-aws-cli
+      - run:
+          name: Ensure back-end infrastructure exists
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              --tags project=Udapeople \
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
 
-  #     - run:
-  #         name: Ensure front-end infrastructure exist
-  #         command: |
-  #           aws cloudformation deploy \
-  #             --template-file .circleci/files/frontend.yml \
-  #             --tags project=Udapeople \
-  #             --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-  #             --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --tags project=Udapeople \
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
 
-  #     - run:
-  #         name: Add back-end ip to ansible inventory
-  #         command: |
-  #               BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
-  #                 --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-  #                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
-  #                 --output text)
-  #               echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
-  #               cat .circleci/ansible/inventory.txt
+      - run:
+          name: Add back-end ip to ansible inventory
+          command: |
+                BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+                  --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+                  --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                  --output text)
+                echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
+                cat .circleci/ansible/inventory.txt
 
-  #     - persist_to_workspace:
-  #         root: ~/
-  #         paths:
-  #           - project/.circleci/ansible/inventory.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/inventory.txt
 
-  #     - destroy-environment
+      - destroy-environment
 
-  # configure-infrastructure:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - checkout
-  #     - install-ansible
-  #     - add_ssh_keys:
-  #         fingerprints: ["30:1a:4e:65:9d:c1:d0:07:18:ca:98:98:64:4a:d6:d6"]
-  #     - attach_workspace:
-  #         at: ~/
-  #     - run:
-  #         name: Configure server
-  #         command: |
-  #           cd .circleci/ansible
-  #           cat inventory.txt
-  #           ansible-playbook -i inventory.txt configure-server.yml
-  #     - destroy-environment
+  configure-infrastructure:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install-ansible
+      - add_ssh_keys:
+          fingerprints: ["30:1a:4e:65:9d:c1:d0:07:18:ca:98:98:64:4a:d6:d6"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Configure server
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml
+      - destroy-environment
 
-  # run-migrations:
-  #   docker:
-  #     - image: cimg/node:13.8.0
-  #   steps:
-  #     - checkout
-  #     - install-aws-cli
-  #     - restore_cache:
-  #         keys: [backenddependencies]
-  #     - run:
-  #         name: Run migrations
-  #         command: |
-  #           cd backend
-  #           npm install
-  #           npm run migrations > migrations_dump.txt
-  #           cat migrations_dump.txt
-  #     - run:
-  #         name: Send migration status to kvdb.io
-  #         command: |
-  #           if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
-  #           then
-  #             curl -d '1' https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}
-  #           else
-  #             echo "No migrations are pending" 
-  #           fi
-  #     - destroy-environment
-  #     - revert-migrations
+  run-migrations:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - install-aws-cli
+      - restore_cache:
+          keys: [backend-dependencies]
+      - run:
+          name: Run migrations
+          command: |
+            cd backend
+            npm install
+            npm run migrations > migrations_dump.txt
+            cat migrations_dump.txt
+      - run:
+          name: Send migration status to kvdb.io
+          command: |
+            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            then
+              curl -d '1' https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}
+            else
+              echo "No migrations are pending" 
+            fi
+      - destroy-environment
+      - revert-migrations
 
 
-  # deploy-frontend:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - checkout
-  #     - install-aws-cli
-  #     - install-ansible
-  #     - install-nodejs
-  #     - restore_cache:
-  #         keys: [frontenddependencies]
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           cd frontend
-  #           npm install
-  #     - run:
-  #         name: Get backend url
-  #         command: |
-  #           BACKEND_IP=$(aws ec2 describe-instances \
-  #             --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-  #             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-  #             --output text)
-  #           export API_URL="http://${BACKEND_IP}:3030"
-  #           echo "API_URL=http://${BACKEND_IP}:3030" >> frontend/.env
-  #           echo "${API_URL}"
-  #     - run:
-  #         name: Deploy frontend objects
-  #         command: |
-  #           cd frontend
-  #           aws s3 cp /frontend/node_modules/dist/ s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-  #     - destroy-environment    
-  #     - revert-migrations
+  deploy-frontend:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install-aws-cli
+      - install-ansible
+      - install-nodejs
+      - restore_cache:
+          keys: [frontenddependencies]
+      - run:
+          name: Install dependencies
+          command: |
+            cd frontend
+            npm install
+      - run:
+          name: Get backend url
+          command: |
+            BACKEND_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL=http://${BACKEND_IP}:3030" >> frontend/.env
+            echo "${API_URL}"
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            aws s3 cp dist/ s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - destroy-environment    
+      - revert-migrations
 
-  # deploy-backend:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - checkout
-  #     - install-aws-cli
-  #     - install-ansible
-  #     - install-nodejs
-  #     - add_ssh_keys:
-  #         fingerprints: ["30:1a:4e:65:9d:c1:d0:07:18:ca:98:98:64:4a:d6:d6"]
-  #     - attach_workspace:
-  #         at: ~/
-  #     - restore_cache:
-  #         keys: [backenddependencies]
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           cd backend
-  #           npm install
-  #     - run:
-  #         name: Add the backend to an artifact
-  #         command: |
-  #           cd backend
-  #           npm run build
-  #           sudo tar -cfvz backend.tar.gz dist/* package*
-  #           cp backend.tar.gz .circleci/ansible/roles/deploy/files
-  #     - run:
-  #         name: Deploy backend
-  #         command: |
-  #           cd .circleci/ansible
-  #           cat inventory.txt
-  #           ansible-playbook -i inventory.txt deploy-backend.yml
-  #     - destroy-environment  
-  #     - revert-migrations
+  deploy-backend:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install-aws-cli
+      - install-ansible
+      - install-nodejs
+      - add_ssh_keys:
+          fingerprints: ["30:1a:4e:65:9d:c1:d0:07:18:ca:98:98:64:4a:d6:d6"]
+      - attach_workspace:
+          at: ~/
+      - restore_cache:
+          keys: [backenddependencies]
+      - run:
+          name: Install dependencies
+          command: |
+            cd backend
+            npm install
+      - run:
+          name: Add the backend to an artifact
+          command: |
+            cd backend
+            npm run build
+            sudo tar -cfvz backend.tar.gz dist/* package*
+            cp backend.tar.gz .circleci/ansible/roles/deploy/files
+      - run:
+          name: Deploy backend
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+      - destroy-environment  
+      - revert-migrations
 
   #######################
 
@@ -388,27 +388,27 @@ workflows:
     jobs:
       - build-frontend
       - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only: [main]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [main]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
           ######################
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
