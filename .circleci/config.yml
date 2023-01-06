@@ -72,7 +72,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-dependencies]
+          keys: [frontenddependencies]
 
       - run:
           name: Build front-end
@@ -81,7 +81,7 @@ jobs:
             npm install
             npm run build
       - save_cache:
-          key: frontend-dependencies
+          key: frontenddependencies
           paths:
             - frontend/node_modules
             - frontend/dist
@@ -92,7 +92,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-dependencies]
+          keys: [backenddependencies]
       - run:
           name: Build back-end
           command: |
@@ -100,7 +100,7 @@ jobs:
              npm install
              npm run build
       - save_cache:
-          key: backend-dependencies
+          key: backenddependencies
           paths:
             - backend/node_modules
             - backend/dist
@@ -111,7 +111,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-dependencies]
+          keys: [frontenddependencies]
       - run:
           name: Unit test for front-end
           command: |
@@ -126,7 +126,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-dependencies]
+          keys: [backenddependencies]
       - run:
           name: Unit test for back-end
           command: |
@@ -140,7 +140,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-dependencies]
+          keys: [frontenddependencies]
       - run:
           name: Scan for front-end
           command: |
@@ -159,7 +159,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-dependencies]
+          keys: [backenddependencies]
       - run:
           name: Scan for back-end
           command: |
@@ -235,7 +235,7 @@ jobs:
       - checkout
       - install-aws-cli
       - restore_cache:
-          keys: [backend-dependencies]
+          keys: [backenddependencies]
       - run:
           name: Run migrations
           command: |
@@ -265,7 +265,7 @@ jobs:
       - install-ansible
       - install-nodejs
       - restore_cache:
-          keys: [frontend-dependencies]
+          keys: [frontenddependencies]
       - run:
           name: Install dependencies
           command: |
@@ -302,7 +302,7 @@ jobs:
       - attach_workspace:
           at: ~/
       - restore_cache:
-          keys: [backend-dependencies]
+          keys: [backenddependencies]
       - run:
           name: Install dependencies
           command: |
