@@ -280,7 +280,7 @@ jobs:
           name: Deploy frontend objects
           command: |
             cd frontend
-            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            aws s3 cp frontend/dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment    
       - revert-migrations       
 
@@ -308,7 +308,7 @@ jobs:
           command: |
             cd backend
             npm run build
-            tar -cfz backend.tar.gz dist/* package*
+            tar -cfz backend/backend.tar.gz dist/* package*
             cp backend/backend.tar.gz .circleci/ansible/roles/deploy/files
       - run:
           name: Deploy backend
