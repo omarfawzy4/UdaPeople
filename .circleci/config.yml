@@ -284,40 +284,40 @@ jobs:
       - destroy-environment    
       - revert-migrations       
 
-  # deploy-backend:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - checkout
-  #     - install-aws-cli
-  #     - install-ansible
-  #     - install-nodejs
-  #     - add_ssh_keys:
-  #         fingerprints: ["30:1a:4e:65:9d:c1:d0:07:18:ca:98:98:64:4a:d6:d6"]
-  #     - attach_workspace:
-  #         at: ~/
-  #     - restore_cache:
-  #         keys: [backend-dependencies]
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           cd backend
-  #           npm install
-  #     - run:
-  #         name: Add the backend to an artifact
-  #         command: |
-  #           cd backend
-  #           npm run build
-  #           tar -cfz backend.tar.gz dist/* package*
-  #           cp backend/backend.tar.gz .circleci/ansible/roles/deploy/files
-  #     - run:
-  #         name: Deploy backend
-  #         command: |
-  #           cd .circleci/ansible
-  #           cat inventory.txt
-  #           ansible-playbook -i inventory.txt deploy-backend.yml
-  #     - destroy-environment  
-  #     - revert-migrations
+  deploy-backend:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install-aws-cli
+      - install-ansible
+      - install-nodejs
+      - add_ssh_keys:
+          fingerprints: ["30:1a:4e:65:9d:c1:d0:07:18:ca:98:98:64:4a:d6:d6"]
+      - attach_workspace:
+          at: ~/
+      - restore_cache:
+          keys: [backend-dependencies]
+      - run:
+          name: Install dependencies
+          command: |
+            cd backend
+            npm install
+      - run:
+          name: Add the backend to an artifact
+          command: |
+            cd backend
+            npm run build
+            tar -cfz backend.tar.gz dist/* package*
+            cp backend/backend.tar.gz .circleci/ansible/roles/deploy/files
+      - run:
+          name: Deploy backend
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+      - destroy-environment  
+      - revert-migrations
 
 #   smoke-test:
 #     docker:
@@ -401,8 +401,8 @@ workflows:
           requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
