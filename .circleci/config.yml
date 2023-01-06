@@ -73,6 +73,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: [frontend-dependencies]
+
       - run:
           name: Build front-end
           command: |
@@ -80,8 +81,10 @@ jobs:
             npm install
             npm run build
       - save_cache:
-          paths: [frontend/node_modules]
           key: frontend-dependencies
+          paths:
+            - frontend/node_modules
+            - frontend/dist
 
   build-backend:
     docker:
@@ -97,8 +100,10 @@ jobs:
              npm install
              npm run build
       - save_cache:
-          paths: [backend/node_modules]
           key: backend-dependencies
+          paths:
+            - backend/node_modules
+            - backend/dist
 
   test-frontend:
     docker:
@@ -306,7 +311,7 @@ jobs:
       - run:
           name: Add the backend to an artifact
           command: |
-            cd backend/node_modules
+            cd backend
             npm run build
             sudo tar -cfvz backend.tar.gz dist/* package*
             cp backend.tar.gz .circleci/ansible/roles/deploy/files
