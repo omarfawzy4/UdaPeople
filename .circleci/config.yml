@@ -315,7 +315,6 @@ jobs:
             mkdir backend
             sudo tar cfvz backend.tar.gz dist/* package*
             cd ..
-            sudo mkdir .circleci/ansible/roles/deploy/files/
             sudo cp backend/backend.tar.gz .circleci/ansible/roles/deploy/files/
       - run:
           name: Deploy backend
