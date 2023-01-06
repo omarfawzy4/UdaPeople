@@ -71,8 +71,8 @@ jobs:
       - image: cimg/node:13.8.0
     steps:
       - checkout
-      - restore_cache:
-          keys: [frontenddependencies]
+      # - restore_cache:
+      #     keys: [frontenddependencies]
 
       - run:
           name: Build front-end
@@ -91,8 +91,8 @@ jobs:
       - image: cimg/node:13.8.0
     steps:
       - checkout
-      - restore_cache:
-          keys: [backenddependencies]
+      # - restore_cache:
+      #     keys: [backenddependencies]
       - run:
           name: Build back-end
           command: |
