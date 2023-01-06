@@ -313,7 +313,7 @@ jobs:
             cd backend
             npm run build
             mkdir backend
-            sudo tar -cfvz backend.tar.gz dist/* package*
+            sudo tar cfvz backend.tar.gz dist/* package*
             cp backend.tar.gz .circleci/ansible/roles/deploy/files
       - run:
           name: Deploy backend
