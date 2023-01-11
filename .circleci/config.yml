@@ -271,10 +271,10 @@ jobs:
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo "API_URL=http://${BACKEND_IP}:3030" >> frontend/production.env
-            echo "${API_URL}"
-            cat frontend/production.env
+            export REACT_APP_API_URL="http://${BACKEND_IP}:3030"
+            echo "REACT_APP_API_URL=http://${BACKEND_IP}:3030" >> frontend/.env
+            echo "${REACT_APP_API_URL}"
+            cat frontend/.env
 
       - run:
           name: Install dependencies
