@@ -280,12 +280,15 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL=http://${BACKEND_IP}:3030" >> frontend/.env
             echo "${API_URL}"
-      - run:
-          name: Deploy frontend objects
-          command: |
             cd frontend
             aws s3 cp dist/ s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-            aws s3 cp production.env s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+
+      # - run:
+      #     name: Deploy frontend objects
+      #     command: |
+      #       cd frontend
+      #       aws s3 cp dist/ s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      #       aws s3 cp production.env s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment    
       - revert-migrations
 
