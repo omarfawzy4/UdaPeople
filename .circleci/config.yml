@@ -309,8 +309,11 @@ jobs:
       - run:
           name: Add the backend to an artifact
           command: |
-            sudo tar cfvz backend.tar.gz . --warning=no-file-changed
-            sudo cp backend.tar.gz .circleci/ansible/roles/deploy/files/
+            cd backend
+            mkdir backend
+            sudo tar cfvz backend.tar.gz .
+            cd .. 
+            sudo cp backend/backend.tar.gz .circleci/ansible/roles/deploy/files/
       - run:
           name: Deploy backend
           command: |
