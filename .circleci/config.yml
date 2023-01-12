@@ -245,11 +245,11 @@ jobs:
       - run:
           name: Send migration status to kvdb.io
           command: |
-            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            if grep -q "No migrations are pending" ~/project/backend/migrations_dump.txt
             then
               curl -d '1' https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}
             else
-              echo "No migrations are pending" 
+              echo "Failed" 
             fi
       - destroy-environment
       - revert-migrations
@@ -301,12 +301,14 @@ jobs:
       - restore_cache:
           keys: [backenddependencies]
       - run:
-          name: Add the backend to an artifact
+          name: Installing dependencies
           command: |
             cd backend
             npm install
             npm run build
-            cd ..
+      - run:
+          name: Add the backend to an artifact
+          command: |
             sudo tar cfvz backend.tar.gz .
             sudo cp backend.tar.gz .circleci/ansible/roles/deploy/files/
       - run:
