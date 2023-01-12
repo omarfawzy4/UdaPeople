@@ -262,8 +262,8 @@ jobs:
       - checkout
       - install-aws-cli
       - install-nodejs
-      - restore_cache:
-          keys: [frontenddependencies]
+      # - restore_cache:
+      #     keys: [frontenddependencies]
       - run:
           name: Get backend url
           command: |
@@ -277,12 +277,15 @@ jobs:
             cat frontend/.env
 
       - run:
-          name: Deploy frontend objects
+          name: Install dependencies
           command: |
             cd frontend
             npm install
-            npm run build
-            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+
+      - run:
+          name: Deploy frontend objects
+          command: |
+            aws s3 cp frontend s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment
       - revert-migrations
 
