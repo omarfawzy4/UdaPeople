@@ -245,11 +245,11 @@ jobs:
       - run:
           name: Send migration status to kvdb.io
           command: |
-            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            if grep -q "No migrations are pending" ~/project/backend/migrations_dump.txt
             then
               curl -d '1' https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}
             else
-              echo "No migrations are pending" 
+              echo "Failed" 
             fi
       - destroy-environment
       - revert-migrations
@@ -262,8 +262,8 @@ jobs:
       - checkout
       - install-aws-cli
       - install-nodejs
-      - restore_cache:
-          keys: [frontenddependencies]
+      # - restore_cache:
+      #     keys: [frontenddependencies]
       - run:
           name: Get backend url
           command: |
@@ -277,12 +277,15 @@ jobs:
             cat frontend/.env
 
       - run:
-          name: Deploy frontend objects
+          name: Install dependencies
           command: |
             cd frontend
             npm install
-            npm run build
-            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+
+      - run:
+          name: Deploy frontend objects
+          command: |
+            aws s3 cp frontend s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment
       - revert-migrations
 
@@ -301,22 +304,25 @@ jobs:
       - restore_cache:
           keys: [backenddependencies]
       - run:
-          name: Install dependencies
+          name: Installing dependencies
           command: |
             cd backend
             npm install
+            npm run build
       - run:
           name: Add the backend to an artifact
           command: |
             cd backend
-            npm run build
             mkdir backend
-            sudo tar cfvz backend.tar.gz dist/* package*
-            cd ..
+            sudo tar cfvz backend.tar.gz .
+            cd .. 
             sudo cp backend/backend.tar.gz .circleci/ansible/roles/deploy/files/
       - run:
           name: Deploy backend
           command: |
+            export TYPEORM_MIGRATIONS_DIR=./migrations
+            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+            export TYPEORM_MIGRATIONS=./migrations/*.ts
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
