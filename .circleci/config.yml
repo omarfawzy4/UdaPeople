@@ -262,8 +262,8 @@ jobs:
       - checkout
       - install-aws-cli
       - install-nodejs
-      # - restore_cache:
-      #     keys: [frontenddependencies]
+      - restore_cache:
+          keys: [frontenddependencies]
       - run:
           name: Get backend url
           command: |
@@ -281,6 +281,7 @@ jobs:
           command: |
             cd frontend
             npm install
+            npm run build
 
       - run:
           name: Deploy frontend objects
