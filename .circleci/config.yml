@@ -301,19 +301,14 @@ jobs:
       - restore_cache:
           keys: [backenddependencies]
       - run:
-          name: Install dependencies
-          command: |
-            cd backend
-            npm install
-      - run:
           name: Add the backend to an artifact
           command: |
             cd backend
+            npm install
             npm run build
-            mkdir backend
-            sudo tar cfvz backend.tar.gz dist/* package*
             cd ..
-            sudo cp backend/backend.tar.gz .circleci/ansible/roles/deploy/files/
+            sudo tar cfvz backend.tar.gz .
+            sudo cp backend.tar.gz .circleci/ansible/roles/deploy/files/
       - run:
           name: Deploy backend
           command: |
