@@ -390,7 +390,7 @@ jobs:
       - destroy-environment  
       - revert-migrations 
 
-cleanup:
+  cleanup:
     docker:
       - image: cimg/base:stable
     steps:
@@ -399,9 +399,9 @@ cleanup:
       - run:
           name: Get old stack workflow id
           command: |
-            export STACKS=$(aws cloudformation \
+            export STACKS=($(aws cloudformation \
               list-exports --query "Exports[?Name==\`WorkflowID\`].value" \
-              --no-paginate --output text)
+              --no-paginate --output text))
             echo "Stack names: ${STACKS[@]}"
             export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/OldWorkflowID)
             echo "OldWorkflowID: ${OldWorkflowID}"
