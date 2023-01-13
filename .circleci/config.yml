@@ -372,11 +372,15 @@ jobs:
       - checkout
       - install-aws-cli
       - run:
+          name: Install cURL
+          command: |
+            sudo apt install curl
+      - run:
           name: Save OldWorkflowID to kvdb.io
           command: |
             export OldWorkflowID=$(aws cloudformation \
-              list-exports --query "Exports[?Name==\`WorkflowID\`].value" \
-              --no-paginate --output text)
+              list-exports --query "Exports[?Name=='WorkflowID'].Value" \
+              --region us-east-1 --output text)
             echo $OldWorkflowID
             curl https://kvdb.io/${KVDB_BUCKET}/oldworkflowid -d "$OldWorkflowID"
       - run:
@@ -385,7 +389,7 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name InitialStack \
-              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
+              --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy-environment  
       - revert-migrations 
 
@@ -396,11 +400,15 @@ jobs:
       - checkout
       - install-aws-cli
       - run:
+          name: Install cURL
+          command: |
+            sudo apt install curl
+      - run:
           name: Get old stack workflow id
           command: |
             export STACKS=($(aws cloudformation \
-              list-exports --query "Exports[?Name=='WorkflowID'].Value" \
-              --region us-east-1 --output text))
+              list-stacks --query "StackSummaries[*].StackName" \
+              --stack-status-filter CREATE_COMPLETE --region us-east-1 --output text))
             echo "Stack names: ${STACKS[@]}"
             export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/oldworkflowid)
             echo "OldWorkflowID: ${OldWorkflowID}"
