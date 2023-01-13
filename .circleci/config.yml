@@ -232,9 +232,8 @@ jobs:
       - image: cimg/node:13.8.0
     steps:
       - checkout
-      - install-aws-cli
       - restore_cache:
-          keys: [backend-dependencies]
+          keys: [backenddependencies]
       - run:
           name: Run migrations
           command: |
