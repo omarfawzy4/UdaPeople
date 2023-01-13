@@ -377,9 +377,8 @@ jobs:
             export OldWorkflowID=$(aws cloudformation \
               list-exports --query "Exports[?Name==\`WorkflowID\`].value" \
               --no-paginate --output text)
-            echo ${OldWorkflowID} >> ~/OldWorkflowID.txt
-            cat ~/OldWorkflowID.txt
-            curl https://kvdb.io/${KVDB_BUCKET}/OldWorkflowID -d "${OldWorkflowID}"
+            echo $OldWorkflowID
+            curl https://kvdb.io/${KVDB_BUCKET}/oldworkflowid -d "$OldWorkflowID"
       - run:
           name: Update cloudfront distribution
           command: |
@@ -403,7 +402,7 @@ jobs:
               list-exports --query "Exports[?Name==\`WorkflowID\`].value" \
               --no-paginate --output text))
             echo "Stack names: ${STACKS[@]}"
-            export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/OldWorkflowID)
+            export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/oldworkflowid)
             echo "OldWorkflowID: ${OldWorkflowID}"
             echo "CIRCLE_WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
