@@ -233,7 +233,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backenddependencies]
+          keys: [backend-dependencies]
       - run:
           name: Run migrations
           command: |
