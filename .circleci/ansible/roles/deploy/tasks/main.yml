@@ -6,7 +6,7 @@
 
 - name: "Unarchive backend artifact"
   unarchive:
-    src: backend.tar.gz
+    src: artifact.tar.gz
     dest: ~/backend
 
 - name: "Installing dependencies"
