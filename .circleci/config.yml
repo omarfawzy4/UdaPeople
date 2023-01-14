@@ -404,18 +404,16 @@ jobs:
           command: |
             sudo apt install curl
       - run:
-          name: Get old stack workflow id
+          name: Remove old stacks and files
           command: |
             export STACKS=($(aws cloudformation \
               list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --region us-east-1 --output text))
             echo "Stack names: ${STACKS[@]}"
+
             export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/oldworkflowid)
             echo "OldWorkflowID: ${OldWorkflowID}"
-            echo "CIRCLE_WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}"
-      - run:
-          name: Remove old stacks and files
-          command: |
+            
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
               aws s3 rm s3://udapeople-${OldWorkflowID} --recursive
